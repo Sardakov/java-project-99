@@ -1,27 +1,23 @@
-# Базовый образ для сборки
-FROM eclipse-temurin:21-jdk-jammy as builder
+FROM eclipse-temurin:21-jdk
+
+ARG GRADLE_VERSION=8.7
+
+RUN apt-get update && apt-get install -yq unzip
+
+RUN wget -q https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip \
+    && unzip gradle-${GRADLE_VERSION}-bin.zip \
+    && rm gradle-${GRADLE_VERSION}-bin.zip
+
+ENV GRADLE_HOME=/opt/gradle
+
+RUN mv gradle-${GRADLE_VERSION} ${GRADLE_HOME}
+
+ENV PATH=$PATH:$GRADLE_HOME/bin
 
 WORKDIR /app
 
-# Копируем Gradle файлы
-COPY build.gradle settings.gradle gradle.properties /app/
+COPY /app .
 
-# Копируем папку Gradle
-COPY gradle /app/gradle
+RUN gradle installDist
 
-# Копируем исходный код
-COPY src /app/src
-
-# Сборка проекта
-RUN ./gradlew build -x test --no-daemon
-
-# Финальный образ для выполнения
-FROM eclipse-temurin:21-jre-jammy
-
-WORKDIR /app
-
-COPY --from=builder /app/build/libs/*.jar app.jar
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
-
-EXPOSE 8080
+CMD ./build/install/app/bin/app
