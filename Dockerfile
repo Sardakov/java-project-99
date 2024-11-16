@@ -1,11 +1,19 @@
-FROM eclipse-temurin:21-jdk
-
-ARG GRADLE_VERSION=8.7
+FROM eclipse-temurin:21-jdk-jammy as builder
 
 WORKDIR /app
 
-COPY /app .
+COPY build.gradle settings.gradle gradle.properties /app/
+COPY gradle /app/gradle
+COPY src /app/src
 
-RUN gradle installDist
+RUN ./gradlew build -x test --no-daemon
 
-CMD ./build/install/app/bin/app
+FROM eclipse-temurin:21-jre-jammy
+
+WORKDIR /app
+
+COPY --from=builder /app/build/libs/*.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
+EXPOSE 8080
