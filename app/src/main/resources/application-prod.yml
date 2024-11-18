@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    driverClassName: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate # или none, в зависимости от требований продакшена
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
