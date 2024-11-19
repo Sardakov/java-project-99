@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:mydb
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password: sa
     driverClassName: org.h2.Driver
@@ -12,3 +12,10 @@ spring:
   output:
     ansi:
       enabled: always
+logging:
+  level:
+    root: INFO
+    org.springframework: DEBUG
+    hexlet.code.app: DEBUG
+
+debug: true
