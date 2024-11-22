@@ -129,24 +129,6 @@ class UsersControllerTest {
         assertThat(user.getLastName()).isEqualTo(data.getLastName());
     }
 
-//    @Test
-//    public void testUpdate() throws Exception {
-//
-//        var data = new UserUpdateDTO();
-//        data.setMail(JsonNullable.of("ya@mail.su"));
-//
-//        var request = put("/api/users" + testUser.getId())
-//                .with(token)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(om.writeValueAsString(data));
-//
-//        mockMvc.perform(request)
-//                .andExpect(status().isOk());
-//
-//        var user = userRepository.findById(testUser.getId()).get();
-//        assertThat(user.getEmail()).isEqualTo(data.getMail().get());
-//    }
-
     @Test
     public void testUpdate() throws Exception {
 

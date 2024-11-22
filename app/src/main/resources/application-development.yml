@@ -16,6 +16,6 @@ logging:
   level:
     root: INFO
     org.springframework: DEBUG
-    hexlet.code.app: DEBUG
+    hexlet.code.app.service: DEBUG
 
 debug: true
