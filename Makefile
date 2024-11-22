@@ -27,6 +27,10 @@ lint:
 update-deps:
 	make -C app update-deps
 
+start:
+	make -C app start
+
+
 
 build-run: build run
 
