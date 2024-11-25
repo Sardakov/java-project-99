@@ -18,10 +18,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.instancio.Instancio;
 
 import org.openapitools.jackson.nullable.JsonNullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -68,6 +71,8 @@ class UsersControllerTest {
 
     private User testUser;
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
@@ -79,7 +84,13 @@ class UsersControllerTest {
 
         testUser = Instancio.of(modelGenerator.getUserModel())
                 .create();
+
         userRepository.save(testUser);
+    }
+
+    @BeforeEach
+    void setupLogging() {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
     }
 
     @Test
@@ -131,6 +142,7 @@ class UsersControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
+        var token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
 
         var data = new HashMap<>();
         data.put("firstName", "Mike");
@@ -147,4 +159,29 @@ class UsersControllerTest {
         assertThat(user.getFirstName()).isEqualTo(("Mike"));
     }
 
+    @Test
+    public void testDeleteAuthorized() throws Exception {
+        // Создайте токен для тестового пользователя
+        var token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
+
+        var request = delete("/api/users/" + testUser.getId())
+                .with(token);
+        mockMvc.perform(request)
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testDeleteUnauthorized() throws Exception {
+        logger.debug("Starting testDeleteUnauthorized");
+
+        var unauthorizedUser = Instancio.of(modelGenerator.getUserModel()).create();
+        userRepository.save(unauthorizedUser);
+
+        var request = delete("/api/users/" + testUser.getId())
+                .with(jwt().jwt(builder -> builder.subject(unauthorizedUser.getEmail())));
+
+        mockMvc.perform(request)
+                .andDo(result -> logger.debug("Response status: {}", result.getResponse().getStatus()))
+                .andExpect(status().isForbidden());
+    }
 }

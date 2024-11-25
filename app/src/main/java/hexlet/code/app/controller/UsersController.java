@@ -10,6 +10,7 @@ import hexlet.code.app.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class UsersController {
     private UserMapper userMapper;
 
     @GetMapping()
+    @PreAuthorize("isAuthenticated()")
     public List<UserDTO> index() {
         var users = userRepository.findAll();
         return users.stream()
@@ -33,6 +35,7 @@ public class UsersController {
     }
 
     @GetMapping(path = "/{id}")
+    @PreAuthorize("isAuthenticated()")
     public UserDTO show(@PathVariable long id) {
         var user =  userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
@@ -49,6 +52,7 @@ public class UsersController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("@userUtils.isAuthor(#id)")
     UserDTO update(@RequestBody UserUpdateDTO userData, @PathVariable Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
@@ -60,6 +64,7 @@ public class UsersController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@userUtils.isAuthor(#id)")
     public void destroy(@PathVariable Long id) {
         userRepository.deleteById(id);
     }
