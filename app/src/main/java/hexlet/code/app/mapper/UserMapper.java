@@ -2,10 +2,7 @@ package hexlet.code.app.mapper;
 
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.dto.UserDTO;
-import org.mapstruct.InheritConfiguration;
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -22,8 +19,6 @@ import hexlet.code.app.model.User;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public abstract class UserMapper {
-
-
 
     public abstract User map(UserCreateDTO dto);
 

@@ -45,11 +45,10 @@ public class ModelGenerator {
 
     private void logGeneratedModels() {
         try {
-            // Создаем реальные объекты из моделей
-            User generatedUser = Instancio.create(userModel);  // Используем Instancio.create() для получения объекта
+            User generatedUser = Instancio.create(userModel);
             logger.info("Generated user model: {}", generatedUser);
 
-            TaskStatus generatedTaskStatus = Instancio.create(taskStatusModel);  // То же для TaskStatus
+            TaskStatus generatedTaskStatus = Instancio.create(taskStatusModel);
             logger.info("Generated taskStatus model: {}", generatedTaskStatus);
         } catch (Exception e) {
             logger.error("Failed to log generated models", e);

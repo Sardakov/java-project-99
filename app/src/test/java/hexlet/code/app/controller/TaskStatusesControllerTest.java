@@ -10,7 +10,6 @@ import hexlet.code.app.mapper.TaskStatusMapper;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.util.ModelGenerator;
-import jakarta.persistence.SqlResultSetMapping;
 import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;
@@ -30,7 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -79,7 +77,6 @@ public class TaskStatusesControllerTest {
 
         testTaskStatus = Instancio.of(modelGenerator.getTaskStatusModel())
                 .create();
-//        taskStatusRepository.save(testTaskStatus);
     }
 
     @Test
@@ -89,9 +86,9 @@ public class TaskStatusesControllerTest {
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
-        var body =response.getContentAsString();
+        var body = response.getContentAsString();
 
-        List<TaskStatusDTO> taskStatusDTOS = om.readValue(body, new TypeReference<List<TaskStatusDTO>>() {});
+        List<TaskStatusDTO> taskStatusDTOS = om.readValue(body, new TypeReference<List<TaskStatusDTO>>() { });
 
         var actual = taskStatusDTOS.stream().map(taskStatusMapper::map).toList();
         var expected = taskStatusRepository.findAll();
@@ -108,7 +105,7 @@ public class TaskStatusesControllerTest {
                 .getResponse();
         var body = response.getContentAsString();
 
-        List<TaskStatusDTO> taskStatusDTOS = om.readValue(body, new TypeReference<>() {});
+        List<TaskStatusDTO> taskStatusDTOS = om.readValue(body, new TypeReference<>() { });
 
         var actual = taskStatusDTOS.stream().map(taskStatusMapper::map).toList();
         var expected = taskStatusRepository.findAll();
@@ -116,7 +113,7 @@ public class TaskStatusesControllerTest {
     }
 
     @Test
-    public void testCreate() throws Exception{
+    public void testCreate() throws Exception {
         var data = taskStatusMapper.map(testTaskStatus);
         var request = post("/api/task_statuses")
                 .with(token)
@@ -133,7 +130,7 @@ public class TaskStatusesControllerTest {
     }
 
     @Test
-    public void testUpdate() throws Exception{
+    public void testUpdate() throws Exception {
         taskStatusRepository.save(testTaskStatus);
 
         String uniqName = "uniq-name-" + UUID.randomUUID();

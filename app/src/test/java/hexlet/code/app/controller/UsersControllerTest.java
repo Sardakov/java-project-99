@@ -2,7 +2,6 @@ package hexlet.code.app.controller;
 
 
 
-import hexlet.code.app.dto.UserUpdateDTO;
 import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
@@ -17,19 +16,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.instancio.Instancio;
 
-import org.openapitools.jackson.nullable.JsonNullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
@@ -142,13 +141,13 @@ class UsersControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
-        var token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
+        var newToken = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
 
         var data = new HashMap<>();
         data.put("firstName", "Mike");
 
         var request = put("/api/users/" + testUser.getId())
-                .with(token)
+                .with(newToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(data));
 
@@ -162,10 +161,10 @@ class UsersControllerTest {
     @Test
     public void testDeleteAuthorized() throws Exception {
         // Создайте токен для тестового пользователя
-        var token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
+        var newToken = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
 
         var request = delete("/api/users/" + testUser.getId())
-                .with(token);
+                .with(newToken);
         mockMvc.perform(request)
                 .andExpect(status().isNoContent());
     }
