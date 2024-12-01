@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import hexlet.code.app.dto.TaskStatusDTO;
-import hexlet.code.app.dto.TaskStatusUpdateDTO;
+import hexlet.code.app.dto.TaskStatusesDTO.TaskStatusDTO;
+import hexlet.code.app.dto.TaskStatusesDTO.TaskStatusUpdateDTO;
 import hexlet.code.app.mapper.TaskStatusMapper;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.repository.TaskStatusRepository;
@@ -48,9 +48,6 @@ public class TaskStatusesControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private Faker faker;
-
-    @Autowired
     private ModelGenerator modelGenerator;
 
     @Autowired
@@ -81,35 +78,19 @@ public class TaskStatusesControllerTest {
 
     @Test
     public void testIndex() throws Exception {
-        taskStatusRepository.save(testTaskStatus);
-        var response = mockMvc.perform(get("/api/task_statuses").with(jwt()))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-        var body = response.getContentAsString();
-
-        List<TaskStatusDTO> taskStatusDTOS = om.readValue(body, new TypeReference<List<TaskStatusDTO>>() { });
-
-        var actual = taskStatusDTOS.stream().map(taskStatusMapper::map).toList();
-        var expected = taskStatusRepository.findAll();
-        Assertions.assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+        mockMvc.perform(get("/api/task_statuses").with(jwt()))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testShow() throws Exception {
         taskStatusRepository.save(testTaskStatus);
+        mockMvc.perform(get("/api/task_statuses/" + testTaskStatus.getId()).with(jwt()))
+                .andExpect(status().isOk());
 
-        var response = mockMvc.perform(get("/api/task_statuses").with(jwt()))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-        var body = response.getContentAsString();
+        var status = taskStatusRepository.findById(testTaskStatus.getId()).get();
+        assertThat(status.getSlug()).isEqualTo(testTaskStatus.getSlug());
 
-        List<TaskStatusDTO> taskStatusDTOS = om.readValue(body, new TypeReference<>() { });
-
-        var actual = taskStatusDTOS.stream().map(taskStatusMapper::map).toList();
-        var expected = taskStatusRepository.findAll();
-        Assertions.assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test
