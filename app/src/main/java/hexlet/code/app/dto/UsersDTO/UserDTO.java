@@ -1,4 +1,4 @@
-package hexlet.code.app.dto;
+package hexlet.code.app.dto.UsersDTO;
 
 
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Setter
 @Getter
 public class UserDTO {
-    private long id;
+    private Long id;
 
     private String email;
 
