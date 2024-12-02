@@ -1,14 +1,17 @@
 package hexlet.code.app.model;
 
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,27 +23,35 @@ import java.time.LocalDate;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "task_statuses")
+@Table(name = "tasks")
 @EntityListeners(AuditingEntityListener.class)
-@ToString(includeFieldNames = true, onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
-public class TaskStatus implements BaseEntity {
+@ToString
+public class Task {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    @EqualsAndHashCode.Include
+    private long id;
+
+    private Integer index;
 
     @NotBlank
-    @Column(unique = true)
-    @ToString.Include
+    @Size(min = 1)
     private String name;
 
-    @Column(unique = true)
-    @NotNull
-    @ToString.Include
-    private String slug;
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "taskStatuses_id")
+    private TaskStatus status;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "users_id")
+    private User assignee;
 
     @CreatedDate
     private LocalDate createdAt;
-
 }

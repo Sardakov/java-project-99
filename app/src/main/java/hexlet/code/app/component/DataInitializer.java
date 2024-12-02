@@ -1,7 +1,7 @@
 package hexlet.code.app.component;
 
-import hexlet.code.app.dto.TaskStatusCreateDTO;
-import hexlet.code.app.dto.UserCreateDTO;
+import hexlet.code.app.dto.TaskStatusesDTO.TaskStatusCreateDTO;
+import hexlet.code.app.dto.UsersDTO.UserCreateDTO;
 import hexlet.code.app.mapper.TaskStatusMapper;
 import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.repository.TaskStatusRepository;
@@ -41,7 +41,7 @@ public class DataInitializer implements ApplicationRunner {
         var userData = new UserCreateDTO();
         userData.setEmail("hexlet@example.com");
         String hashedPassword = passwordEncoder.encode("qwerty");
-        userData.setPasswordDigest(hashedPassword);
+        userData.setPassword(hashedPassword);
         var user = userMapper.map(userData);
         userRepository.save(user);
 
