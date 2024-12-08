@@ -3,6 +3,7 @@ package hexlet.code.app.util;
 import hexlet.code.app.model.Task;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.model.User;
+import hexlet.code.app.model.Label;
 import hexlet.code.app.repository.TaskStatusRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -20,10 +21,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ModelGenerator {
     private Model<User> userModel;
-
     private Model<TaskStatus> taskStatusModel;
-
     private Model<Task> taskModel;
+    private Model<Label> labelModel;
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -54,6 +54,12 @@ public class ModelGenerator {
                 .supply(Select.field(Task::getIndex), () -> faker.number().randomDigitNotZero())
                 .supply(Select.field(Task::getDescription), () -> faker.gameOfThrones().character())
                 .toModel();
+
+        labelModel = Instancio.of(Label.class)
+                .ignore(Select.field(Label::getId))
+                .supply(Select.field(Label::getName), () -> faker.gameOfThrones().character())
+                .toModel();
+
 
         logGeneratedModels();
     }

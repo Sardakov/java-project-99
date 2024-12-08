@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.openapitools.jackson.nullable.JsonNullable;
 
+import java.util.Set;
+
 
 @Setter
 @Getter
@@ -25,4 +27,7 @@ public class TaskCreateDTO {
 
     @JsonProperty("status")
     private String taskStatus;
+
+    @JsonProperty("taskLabelIds")
+    private Set<Long> taskLabelIds;
 }
