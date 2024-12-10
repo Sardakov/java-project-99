@@ -4,6 +4,8 @@ import hexlet.code.app.dto.TaskStatusesDTO.TaskStatusCreateDTO;
 import hexlet.code.app.dto.UsersDTO.UserCreateDTO;
 import hexlet.code.app.mapper.TaskStatusMapper;
 import hexlet.code.app.mapper.UserMapper;
+import hexlet.code.app.model.Label;
+import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import hexlet.code.app.repository.UserRepository;
 import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +37,9 @@ public class DataInitializer implements ApplicationRunner {
     private final TaskStatusRepository taskStatusRepository;
 
     @Autowired
+    private final LabelRepository labelRepository;
+
+    @Autowired
     private final TaskStatusMapper taskStatusMapper;
 
     @Override
@@ -45,6 +51,16 @@ public class DataInitializer implements ApplicationRunner {
         userRepository.save(user);
 
         createDefaultTaskStatuses();
+
+        List<String> labelsList = new ArrayList<>();
+        labelsList.add("bug");
+        labelsList.add("feature");
+
+        for (var label : labelsList) {
+            var tsLabel = new Label();
+            tsLabel.setName(label);
+            labelRepository.save(tsLabel);
+        }
     }
 
     private void createDefaultTaskStatuses() {

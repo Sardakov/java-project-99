@@ -111,6 +111,17 @@ public class TasksControllerTest {
     }
 
     @Test
+    public void testIndexFilter() throws Exception {
+        testLabel = Instancio.of(modelGenerator.getLabelModel()).create();
+        labelRepository.save(testLabel);
+        testTask.setLabels(Set.of(testLabel));
+
+        var result = mockMvc.perform(get("/api/tasks?").with(token))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
     public void testShow() throws Exception {
         testTask.setAssignee(testUser);
         testTask.setStatus(testTaskStatus);

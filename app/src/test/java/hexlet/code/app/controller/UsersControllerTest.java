@@ -16,8 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.instancio.Instancio;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -70,7 +69,6 @@ class UsersControllerTest {
 
     private User testUser;
 
-    Logger logger = LoggerFactory.getLogger(getClass());
 
     @BeforeEach
     public void setUp() {
@@ -85,11 +83,6 @@ class UsersControllerTest {
                 .create();
 
         userRepository.save(testUser);
-    }
-
-    @BeforeEach
-    void setupLogging() {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
     }
 
     @Test
@@ -113,6 +106,7 @@ class UsersControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         var body = result.getResponse().getContentAsString();
+
 
         assertThatJson(body).and(
                 v -> v.node("firstName").isEqualTo(testUser.getFirstName()),
@@ -171,7 +165,6 @@ class UsersControllerTest {
 
     @Test
     public void testDeleteUnauthorized() throws Exception {
-        logger.debug("Starting testDeleteUnauthorized");
 
         var unauthorizedUser = Instancio.of(modelGenerator.getUserModel()).create();
         userRepository.save(unauthorizedUser);
@@ -180,7 +173,6 @@ class UsersControllerTest {
                 .with(jwt().jwt(builder -> builder.subject(unauthorizedUser.getEmail())));
 
         mockMvc.perform(request)
-                .andDo(result -> logger.debug("Response status: {}", result.getResponse().getStatus()))
                 .andExpect(status().isForbidden());
     }
 }

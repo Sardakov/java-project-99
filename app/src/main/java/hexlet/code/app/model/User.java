@@ -35,13 +35,7 @@ public class User implements UserDetails, BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     @ToString.Include
     @EqualsAndHashCode.Include
-    private long id;
-
-    @ToString.Include
-    private String firstName;
-
-    @ToString.Include
-    private String lastName;
+    private Long id;
 
     @Column(unique = true)
     @Email
@@ -51,6 +45,12 @@ public class User implements UserDetails, BaseEntity {
     @Column(nullable = false)
     private String passwordDigest;
 
+    @ToString.Include
+    private String firstName;
+
+    @ToString.Include
+    private String lastName;
+
     @CreatedDate
     private LocalDate createdAt;
 
@@ -58,8 +58,8 @@ public class User implements UserDetails, BaseEntity {
     private LocalDate updatedAt;
 
     @Override
-    public String getPassword() {
-        return passwordDigest;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return new ArrayList<GrantedAuthority>();
     }
 
     @Override
@@ -68,13 +68,13 @@ public class User implements UserDetails, BaseEntity {
     }
 
     @Override
-    public boolean isEnabled() {
-        return true;
+    public String getPassword() {
+        return passwordDigest;
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<GrantedAuthority>();
+    public boolean isEnabled() {
+        return true;
     }
 
     @Override

@@ -6,18 +6,15 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 public class UserCreateDTO {
-    @NotBlank
-    private String firstName;
-
-    @NotBlank
-    private String lastName;
-
     @Email
     private String email;
-
+    @NotBlank
+    private String firstName;
+    @NotBlank
+    private String lastName;
     @Size(min = 3)
     private String password;
 }
