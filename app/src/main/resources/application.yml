@@ -12,3 +12,8 @@ spring:
 rsa:
   private-key: classpath:certs/private.pem
   public-key: classpath:certs/public.pem
+
+sentry:
+  dsn: "https://4946818b3d43c985f40f17ef2567490a@o4508447479824384.ingest.us.sentry.io/4508447692619776"
+  tracesSampleRate: 1.0
+  exception-resolver-order: -2147483647
