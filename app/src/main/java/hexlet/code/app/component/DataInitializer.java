@@ -1,8 +1,6 @@
 package hexlet.code.app.component;
 
-import hexlet.code.app.dto.TaskStatusesDTO.TaskStatusCreateDTO;
 import hexlet.code.app.dto.UsersDTO.UserCreateDTO;
-import hexlet.code.app.mapper.TaskStatusMapper;
 import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.model.Label;
 import hexlet.code.app.model.Task;
@@ -14,14 +12,12 @@ import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import hexlet.code.app.repository.UserRepository;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,16 +34,10 @@ public class DataInitializer implements ApplicationRunner {
     private final UserMapper userMapper;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private final TaskStatusRepository taskStatusRepository;
 
     @Autowired
     private final LabelRepository labelRepository;
-
-    @Autowired
-    private final TaskStatusMapper taskStatusMapper;
 
     @Autowired
     private Faker faker;
