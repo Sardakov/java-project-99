@@ -5,8 +5,12 @@ import hexlet.code.app.dto.UsersDTO.UserCreateDTO;
 import hexlet.code.app.mapper.TaskStatusMapper;
 import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.model.Label;
+import hexlet.code.app.model.Task;
+import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.repository.LabelRepository;
+import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
+import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -18,7 +22,10 @@ import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -42,6 +49,12 @@ public class DataInitializer implements ApplicationRunner {
     @Autowired
     private final TaskStatusMapper taskStatusMapper;
 
+    @Autowired
+    private Faker faker;
+
+    @Autowired
+    private final TaskRepository taskRepository;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         var userData = new UserCreateDTO();
@@ -50,7 +63,21 @@ public class DataInitializer implements ApplicationRunner {
         var user = userMapper.map(userData);
         userRepository.save(user);
 
-        createDefaultTaskStatuses();
+        Map<String, String> statusMap = new HashMap<>();
+
+        statusMap.put("Draft", "draft");
+        statusMap.put("ToReview", "to_review");
+        statusMap.put("ToBeFixed", "to_be_fixed");
+        statusMap.put("ToPublish", "to_publish");
+        statusMap.put("Published", "published");
+        for (String key: statusMap.keySet()) {
+            var tsStatus = new TaskStatus();
+            tsStatus.setName(key);
+            tsStatus.setSlug(statusMap.get(key));
+            taskStatusRepository.save(tsStatus);
+
+        }
+
 
         List<String> labelsList = new ArrayList<>();
         labelsList.add("bug");
@@ -61,27 +88,17 @@ public class DataInitializer implements ApplicationRunner {
             tsLabel.setName(label);
             labelRepository.save(tsLabel);
         }
-    }
 
-    private void createDefaultTaskStatuses() {
-        List<TaskStatusCreateDTO> defaultStatuses = Arrays.asList(
-                createStatus("Draft", "draft"),
-                createStatus("To Review", "to_review"),
-                createStatus("To Be Fixed", "to_be_fixed"),
-                createStatus("To Publish", "to_publish"),
-                createStatus("Published", "published")
-        );
-
-        for (TaskStatusCreateDTO statusDTO : defaultStatuses) {
-            var status = taskStatusMapper.map(statusDTO);
-            taskStatusRepository.save(status);
+        var statuses = taskStatusRepository.findAll();
+        var labels = labelRepository.findAll();
+        for (int i = 0; i < 5; i++) {
+            var task = new Task();
+            task.setStatus(statuses.get(i));
+            task.setName(faker.name().name());
+            task.setDescription(faker.lorem().paragraph());
+            task.setLabels(Set.of(labels.get(0)));
+            task.setAssignee(userRepository.findByEmail("hexlet@example.com").get());
+            taskRepository.save(task);
         }
-    }
-
-    private TaskStatusCreateDTO createStatus(String name, String slug) {
-        var statusDTO = new TaskStatusCreateDTO();
-        statusDTO.setName(name);
-        statusDTO.setSlug(slug);
-        return statusDTO;
     }
 }
